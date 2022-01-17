@@ -11,9 +11,41 @@ client.DefaultRequestHeaders.Add("User-Agent", "mi consola");
 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + key);
 
+var urlRegiones = $"https://api.euskadi.eus/euskalmet/geo/regions/basque_country/zones";
+HttpResponseMessage response4 = await client.GetAsync(urlRegiones);
+var resp4 = await response4.Content.ReadAsStringAsync();
+dynamic jsonObject4 = NW.JsonConvert.DeserializeObject(resp4);
+dynamic pp5 = jsonObject4;
 
-// Parse JSON response.
-var urlLocalizacionForecast= $"https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/great_bilbao/locations/bilbao/forecast/trends/measures/at/2020/11/27/for/20201127";
+while (true)
+{
+
+
+
+foreach (var item in pp5)
+    Console.WriteLine($"         {item.regionZoneId}");
+
+
+Console.WriteLine("**********************************");
+Console.WriteLine("Introduce la zona");
+var zona = Console.ReadLine();
+Console.WriteLine("**********************************");
+Console.WriteLine("         Localidades");
+
+var urlLocalidades = $"https://api.euskadi.eus/euskalmet/geo/regions/basque_country/zones/{zona}/locations";
+HttpResponseMessage response5 = await client.GetAsync(urlLocalidades);
+var resp5 = await response5.Content.ReadAsStringAsync();
+dynamic jsonObject5 = NW.JsonConvert.DeserializeObject(resp5);
+dynamic pp6 = jsonObject5;
+
+foreach (var item in pp6)
+    Console.WriteLine($"          {item.regionZoneLocationId}");
+
+Console.WriteLine("**********************************");
+Console.WriteLine("Introduce la localidad");
+var municipio = Console.ReadLine();
+
+var urlLocalizacionForecast= $"https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/{zona}/locations/{municipio}/forecast/trends/measures/at/2021/11/27/for/20211127";
 
 var urlEstaciones = "https://api.euskadi.eus/euskalmet/stations";
 var url = "https://api.euskadi.eus/euskalmet/readings/forStation/C071/R0BU/measures/measuresForAir/temperature/at/2022/01/14/08";
@@ -26,50 +58,34 @@ var resp = await response.Content.ReadAsStringAsync();
 var resp2 = await response2.Content.ReadAsStringAsync();
 var resp3 = await response3.Content.ReadAsStringAsync();
 
-//Root myDeserializedClass = NW.JsonConvert.DeserializeObject<Root>(resp);
-//Root2 myDeserializedClass2 = NW.JsonConvert.DeserializeObject<Root2>(resp2);
-
-//foreach (var item in myDeserializedClass.values)
-//    Console.WriteLine($" {item} ");
-
-//Console.WriteLine("====");
-dynamic jsonObject2 = NW.JsonConvert.DeserializeObject(resp2);
-
-
-foreach (var item in jsonObject2)
-    Console.WriteLine($" {item.stationId} ");
-
-//Root4 myDeserializedClass3 = NW.JsonConvert.DeserializeObject<Root4>(resp3);
 dynamic jsonObject3 = NW.JsonConvert.DeserializeObject(resp3);
-
-var pp =  jsonObject3.trends.set[0].temperature;
-var pp1 = jsonObject3.trends.set[0].precipitation;
-var pp2 = jsonObject3.trends.set[0].windspeed;
-Console.WriteLine($" {pp} ");
-
-foreach (dynamic item in pp)
+try
 {
+dynamic pp =  jsonObject3.trends.set[0].temperature;
+dynamic pp1 = jsonObject3.trends.set[0].precipitation;
+dynamic pp2 = jsonObject3.trends.set[0].windspeed;
+dynamic pp3 = jsonObject3.trends.set[0].symbolSet.weather.nameByLang.SPANISH;
+Console.WriteLine($" ");
+Console.WriteLine($"Temperatura de {municipio} = {pp.value} Cº ");
+Console.WriteLine($"Precitipacion acumulada en {municipio} = {pp1.value} ml ");
+Console.WriteLine($"Velocidad del Viento en {municipio}= {pp2.value} Km/h");
+Console.WriteLine($"Descripcion del tiempo en  {municipio} = {pp3} ");
 
-    Console.WriteLine($" Temperatura  {item.First} ");
-}
-
-foreach (dynamic item in pp1)
-{
-   
-    Console.WriteLine($" Precipitacion {item.First} ");
-}
-
-foreach (dynamic item in pp2)
-{
-
-    Console.WriteLine($" Velocidad del viento {item.First} ");
-}
-
-Fuente: https://www.iteramos.com/pregunta/55743/obtener-la-lista-de-valores-distintos-en-la-listafoo
 Console.WriteLine("====");
 
-dynamic jsonObject = NW.JsonConvert.DeserializeObject(resp);
-Console.WriteLine(jsonObject.values);
+}catch(Exception e)
+{
+   
+    Console.WriteLine("Lo siento no hay datos en Euskalmet");
+
+
+}
+
+
+}
+
+//dynamic jsonObject = NW.JsonConvert.DeserializeObject(resp);
+//Console.WriteLine(jsonObject.values);
 
 //**************************************************************//
 public class Temperature
@@ -191,3 +207,21 @@ public class Root2
 }
 
 
+
+
+
+
+//Root myDeserializedClass = NW.JsonConvert.DeserializeObject<Root>(resp);
+//Root2 myDeserializedClass2 = NW.JsonConvert.DeserializeObject<Root2>(resp2);
+
+//foreach (var item in myDeserializedClass.values)
+//    Console.WriteLine($" {item} ");
+
+//Console.WriteLine("====");
+//dynamic jsonObject2 = NW.JsonConvert.DeserializeObject(resp2);
+
+
+//foreach (var item in jsonObject2)
+//    Console.WriteLine($" {item.stationId} ");
+
+//Root4 myDeserializedClass3 = NW.JsonConvert.DeserializeObject<Root4>(resp3);
