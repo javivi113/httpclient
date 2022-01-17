@@ -6,7 +6,6 @@ using MS = System.Text.Json;
 using System.Collections.Generic;
 
 using var client = new HttpClient();
-// var key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJtZXQwMS5hcGlrZXkiLCJpc3MiOiJJRVMgUExBSUFVTkRJIEJISSBJUlVOIiwiZXhwIjoyMjM4MTMxMDAyLCJ2ZXJzaW9uIjoiMS4wLjAiLCJpYXQiOjE2NDE5NzM3OTksImVtYWlsIjoiaWtiZWNAcGxhaWF1bmRpLm5ldCJ9.YPuReD7iqyLlg0zu7DimIWYHlENKM1JwjfF8wYRygLyNnEvnGrUOD-65607nHjlpCYH1zMc-xjLqcTn4oaOXaZy6cIP005CMLxDLXLZNS1brmHihJdAQ2-fMSjBSb1dD0zcb8arYn-lLzVb1GkRWaa6LT4t4GeaTokwTwel_8BtBPOVLOJx8WqILXSJk-Fy53H-BES_ygoqzWu4hOiasRgDKN-IiZvyBReixwXSq92fljibuXYqRFyrXX23yQxBqwiqbzI0DuQvmMKJUKIwYAwu_vrpWkRRNWHLCVlZ-P4qYScEwO0wVYCHXBGPbcG23GQyo2oD9_5kdP3LwEu9pTg";
 var key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJtZXQwMS5hcGlrZXkiLCJpc3MiOiJJRVMgUExBSUFVTkRJIEJISSBJUlVOIiwiZXhwIjoyMjM4MTMxMDAyLCJ2ZXJzaW9uIjoiMS4wLjAiLCJpYXQiOjE2NDE5NzM4MDcsImVtYWlsIjoiaWtiZHZAcGxhaWF1bmRpLm5ldCJ9.IofLYTTBr0PZoiLxmVzrqBU6vYWnoQX8Bi2SorSrvnzinBIG28AutQL3M6CEvLWstteyX74gQzCltKxZYrWUYkrsi9GXWsMzz20TiiSkz1D2KarxLiV5a4yFN71NybjYG_XHEWmnkoMIZmlFQ6O3f4ixyFdSFmLEVjI1-2Ud4XD8LNm035o_8_kkFxKYLYhElnn8wwC44tt5CeT9efMOxQLKa9JrsHUMapypWOybXIeSyScRAgjN8dMySX6IZx7YX6Wt3-buzFxXmBQAlmjvNULWQ0r2VPHnthETr72RWLT1hYhXxOaLdBEnGe6F7hiwTHonU9fy_wBkr2i697qGTA";
 client.DefaultRequestHeaders.Add("User-Agent", "mi consola");
 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -20,49 +19,70 @@ dynamic pp5 = jsonObject4;
 
 while (true)
 {
+
+
+
     foreach (var item in pp5)
         Console.WriteLine($"         {item.regionZoneId}");
+
+
     Console.WriteLine("**********************************");
     Console.WriteLine("Introduce la zona");
     var zona = Console.ReadLine();
     Console.WriteLine("**********************************");
-    Console.WriteLine("Localidades");
+    Console.WriteLine("         Localidades");
+
     var urlLocalidades = $"https://api.euskadi.eus/euskalmet/geo/regions/basque_country/zones/{zona}/locations";
     HttpResponseMessage response5 = await client.GetAsync(urlLocalidades);
     var resp5 = await response5.Content.ReadAsStringAsync();
     dynamic jsonObject5 = NW.JsonConvert.DeserializeObject(resp5);
     dynamic pp6 = jsonObject5;
+
     foreach (var item in pp6)
-        Console.WriteLine($"{item.regionZoneLocationId}");
+        Console.WriteLine($"          {item.regionZoneLocationId}");
+
     Console.WriteLine("**********************************");
     Console.WriteLine("Introduce la localidad");
     var municipio = Console.ReadLine();
-    var diaHoy = DateTime.Today.Day;
+
+    var Dia = DateTime.Today.Day;
+    var diaHoy = "";
+    if (Convert.ToInt32(Dia) / 10 == 0)
+    {
+        diaHoy = "0" + Convert.ToInt32(Dia);
+    }
+    else
+    {
+        diaHoy = "" + Convert.ToInt32(Dia);
+    }
     var AñoHoy = DateTime.Today.Year;
-    var mesHoy = DateTime.Today.Month;
-    var hora = DateTime.Now.Hour;
-    Console.WriteLine($"{diaHoy}-{mesHoy}-{AñoHoy}/{hora}");
+    var mes = DateTime.Today.Month;
+    var mesHoy = "";
+    if (Convert.ToInt32(mes) / 10 == 0)
+    {
+        mesHoy = "0" + Convert.ToInt32(mes);
+    }
+    else
+    {
+        mesHoy = "" + Convert.ToInt32(mes);
+    }
+
     var urlLocalizacionForecast = $"https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/{zona}/locations/{municipio}/forecast/trends/measures/at/{AñoHoy}/{mesHoy}/{diaHoy}/for/{AñoHoy}{mesHoy}{diaHoy}";
+    Console.WriteLine(urlLocalizacionForecast);
     var urlEstaciones = "https://api.euskadi.eus/euskalmet/stations";
-    //var url = $"https://api.euskadi.eus/euskalmet/readings/forStation/C071/R0BU/measures/measuresForAir/temperature/at/2022/01/14/08";
-    var url = $"https://api.euskadi.eus/euskalmet/readings/forStation/C071/R0BU/measures/measuresForAir/temperature/at/{AñoHoy}/{mesHoy}/{diaHoy}/{hora}";
-    Console.WriteLine(url);
+    var url = "https://api.euskadi.eus/euskalmet/readings/forStation/C071/R0BU/measures/measuresForAir/temperature/at/2022/01/14/08";
     HttpResponseMessage response = await client.GetAsync(url);
     HttpResponseMessage response2 = await client.GetAsync(urlEstaciones);
     HttpResponseMessage response3 = await client.GetAsync(urlLocalizacionForecast);
+
     response.EnsureSuccessStatusCode();
     var resp = await response.Content.ReadAsStringAsync();
     var resp2 = await response2.Content.ReadAsStringAsync();
     var resp3 = await response3.Content.ReadAsStringAsync();
+
     dynamic jsonObject3 = NW.JsonConvert.DeserializeObject(resp3);
     try
     {
-        // dynamic setValores=jsonObject3.trends.set;
-        // Console.WriteLine("****************");
-        // Console.WriteLine("****************");
-        // Console.WriteLine($"*{setValores[0].temperature}**");
-        // Console.WriteLine("****************");
-        // Console.WriteLine("****************");
         dynamic pp = jsonObject3.trends.set[0].temperature;
         dynamic pp1 = jsonObject3.trends.set[0].precipitation;
         dynamic pp2 = jsonObject3.trends.set[0].windspeed;
@@ -79,9 +99,15 @@ while (true)
     }
     catch (Exception e)
     {
+
         Console.WriteLine("Lo siento no hay datos en Euskalmet");
+
+
     }
+
+
 }
+
 //dynamic jsonObject = NW.JsonConvert.DeserializeObject(resp);
 //Console.WriteLine(jsonObject.values);
 
