@@ -66,11 +66,31 @@ while (true)
     var resp2 = await response2.Content.ReadAsStringAsync();
     var resp3 = await response3.Content.ReadAsStringAsync();
     dynamic jsonObject3 = NW.JsonConvert.DeserializeObject(resp3);
-    var tiempoPretry=jsonObject3;
+    var tiempoPretry = jsonObject3.trends.set;
     try
     {
-        // var marcatiempo=tiempoPretry.trends.set[0].range+"";
-        // Console.WriteLine(marcatiempo.substring(0,10));
+        var hora = DateTime.Today.Hour-1;
+        var horaAhora = "";
+        if (Convert.ToInt32(hora) / 10 == 0)
+        {
+            horaAhora = "0" + Convert.ToInt32(hora);
+        }
+        else
+        {
+            horaAhora = "" + Convert.ToInt32(hora);
+        }
+        var valor = 0;
+        var i=0;
+        var stringComp = $"LocalTime:[{horaAhora}:00:00:000..{horaAhora}:59:59:999]";
+        foreach (var x in tiempoPretry)
+        {
+            i++;
+            if (x.range==stringComp)
+            {
+                valor=i;
+            }
+        }
+
         dynamic pp = jsonObject3.trends.set[0].temperature;
         dynamic pp1 = jsonObject3.trends.set[0].precipitation;
         dynamic pp2 = jsonObject3.trends.set[0].windspeed;
