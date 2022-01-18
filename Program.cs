@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Linq;
+using System.Data.SqlClient;
+using System.Data;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using NW = Newtonsoft.Json;
 using MS = System.Text.Json;
 using System.Collections.Generic;
+using Tiempo.Models;
 using var client = new HttpClient();
+
 var key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJtZXQwMS5hcGlrZXkiLCJpc3MiOiJJRVMgUExBSUFVTkRJIEJISSBJUlVOIiwiZXhwIjoyMjM4MTMxMDAyLCJ2ZXJzaW9uIjoiMS4wLjAiLCJpYXQiOjE2NDE5NzM4MDcsImVtYWlsIjoiaWtiZHZAcGxhaWF1bmRpLm5ldCJ9.IofLYTTBr0PZoiLxmVzrqBU6vYWnoQX8Bi2SorSrvnzinBIG28AutQL3M6CEvLWstteyX74gQzCltKxZYrWUYkrsi9GXWsMzz20TiiSkz1D2KarxLiV5a4yFN71NybjYG_XHEWmnkoMIZmlFQ6O3f4ixyFdSFmLEVjI1-2Ud4XD8LNm035o_8_kkFxKYLYhElnn8wwC44tt5CeT9efMOxQLKa9JrsHUMapypWOybXIeSyScRAgjN8dMySX6IZx7YX6Wt3-buzFxXmBQAlmjvNULWQ0r2VPHnthETr72RWLT1hYhXxOaLdBEnGe6F7hiwTHonU9fy_wBkr2i697qGTA";
 client.DefaultRequestHeaders.Add("User-Agent", "mi consola");
 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -29,7 +35,9 @@ while (true)
     dynamic jsonObject5 = NW.JsonConvert.DeserializeObject(resp5);
     dynamic pp6 = jsonObject5;
     foreach (var item in pp6)
-        Console.WriteLine($"{item.regionZoneLocationId}");
+       Console.WriteLine($"{item.regionZoneLocationId}");
+        
+          
     Console.WriteLine("**********************************");
     Console.WriteLine("Introduce la localidad");
     var municipio = Console.ReadLine();
@@ -102,6 +110,17 @@ while (true)
         Console.WriteLine($"****************************************************************");
         Console.WriteLine("====");
         //Aqui El Insert
+         using (var db = new TiempoContext())
+        {
+            try{
+                var a1 = new Tiempo2 { Municipio = municipio, Region = zona }; db.Tiempo.Add(a1);
+                db.SaveChanges();
+            }catch(Exception p){
+                Console.WriteLine("No se ha podido guardar por "+p);
+            }
+            
+        }
+
     }
     catch (Exception e)
     {
