@@ -3,6 +3,8 @@ using System.Linq;
 using System.Data.SqlClient;
 using System.Data;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using NW = Newtonsoft.Json;
@@ -12,6 +14,30 @@ using Tiempo.Models;
 using var client = new HttpClient();
 
 
+//  async static void Main(string[] args)
+// {
+//     int intervalo = 5 * 1000;
+//     try
+//     {
+//         //intervalo = 1000 * Int16.Parse(args[0]);
+//         intervalo = 1000 * Int16.Parse(
+//             Environment.GetEnvironmentVariable("SEGUNDOS")
+//             );
+//     }
+//     catch { }
+//     while (true)
+//     {
+//         var t = await Task.Run(() =>  recogerDatos());
+//         // Esperamos que acabe la tarea
+//         t.Wait();
+//         // Esperamos el intervalo
+//         System.Threading.Thread.Sleep(intervalo);
+//     }
+
+
+// }
+
+//await recogerDatos();
 async void recogerDatos()
 {
     //********JWT********
@@ -111,7 +137,15 @@ async void recogerDatos()
                 {
                     try
                     {
-                        var a1 = new Tiempo2 { Municipio = item.regionZoneLocationId, Region = zonas.regionZoneId, Temperatura = pp.value, VelocidadViento = pp2.value, DescripcionTiempo = pp3, Precipitaciones = pp1.value }; db.Tiempo.Add(a1);
+                        string localizacion = item.regionZoneLocationId + "";
+                        //var a1 = new Tiempo2 { Municipio = item.regionZoneLocationId, Region = zonas.regionZoneId, Temperatura = pp.value, VelocidadViento = pp2.value, DescripcionTiempo = pp3, Precipitaciones = pp1.value, ultimaHora=jsonObject3.trends.set[valor].range, PathImg=jsonObject3.trends.set[valor].symbolset.weather.path}; db.Tiempo.Update(a1);
+
+                        var row = db.Tiempo2.Where(a => a.Municipio == localizacion).Single();
+                        row.ultimaHora = jsonObject3.trends.set[valor].range;
+                        row.VelocidadViento = pp2.value;
+                        row.Temperatura = pp.value;
+                        row.DescripcionTiempo = pp3;
+                        row.PathImg = jsonObject3.trends.set[valor].symbolSet.weather.path;
                         db.SaveChanges();
                     }
                     catch (Exception p)
@@ -127,3 +161,5 @@ async void recogerDatos()
         }
     }
 }
+
+
