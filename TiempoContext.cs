@@ -13,7 +13,7 @@ namespace Tiempo.Models
         public string connString { get; private set; }
         public TiempoContext()
         {
-            connString = $"Server=185.60.40.210\\SQLEXPRESS,58015;Database=07JavierTiempo;User Id=sa;Password=Pa88word;MultipleActiveResultSets=true";
+            connString = $"Server=185.60.40.210\\SQLEXPRESS,58015;Database=DB07Javier;User Id=sa;Password=Pa88word;MultipleActiveResultSets=true";
             //connString = $"Server=localhost;Database=EFPrueba;User Id=sa;Password=Pa88word;";
         }
         protected override void OnConfiguring(DbContextOptionsBuilder options)=> options.UseSqlServer(connString);
